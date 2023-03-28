@@ -8,6 +8,7 @@ import torch
 import fire
 import time
 import json
+import input
 
 from pathlib import Path
 
@@ -80,44 +81,54 @@ def main(
         ckpt_dir, tokenizer_path, local_rank, world_size, max_seq_len, max_batch_size
     )
 
-    prompts = [
-        # For these prompts, the expected answer is the natural continuation of the prompt
-        "I believe the meaning of life is",
-        "Simply put, the theory of relativity states that ",
-        "Building a website can be done in 10 simple steps:\n",
-        # Few shot prompts: https://huggingface.co/blog/few-shot-learning-gpt-neo-and-inference-api
-        """Tweet: "I hate it when my phone battery dies."
-Sentiment: Negative
-###
-Tweet: "My day has been 👍"
-Sentiment: Positive
-###
-Tweet: "This is the link to the article"
-Sentiment: Neutral
-###
-Tweet: "This new music video was incredibile"
-Sentiment:""",
-        """Translate English to French:
+#     prompts = [
+#         # For these prompts, the expected answer is the natural continuation of the prompt
+#         "I believe the meaning of life is",
+#         "Simply put, the theory of relativity states that ",
+#         "Building a website can be done in 10 simple steps:\n",
+#         # Few shot prompts: https://huggingface.co/blog/few-shot-learning-gpt-neo-and-inference-api
+#         """Tweet: "I hate it when my phone battery dies."
+# Sentiment: Negative
+# ###
+# Tweet: "My day has been 👍"
+# Sentiment: Positive
+# ###
+# Tweet: "This is the link to the article"
+# Sentiment: Neutral
+# ###
+# Tweet: "This new music video was incredibile"
+# Sentiment:""",
+#         """Translate English to French:
 
-sea otter => loutre de mer
+# sea otter => loutre de mer
 
-peppermint => menthe poivrée
+# peppermint => menthe poivrée
 
-plush girafe => girafe peluche
+# plush girafe => girafe peluche
 
-cheese =>""",
-    ]
-    # results = generator.generate(
-    #     prompts, max_gen_len=256, temperature=temperature, top_p=top_p
-    # )
-    results = [generator.generate(
-        [prompt], max_gen_len=32, temperature=temperature, top_p=top_p
-    ) for prompt in prompts]
+# cheese =>""",
+#     ]
+#     # results = generator.generate(
+#     #     prompts, max_gen_len=256, temperature=temperature, top_p=top_p
+#     # )
+#     results = [generator.generate(
+#         [prompt], max_gen_len=32, temperature=temperature, top_p=top_p
+#     ) for prompt in prompts]
 
-    for result in results:
-        print("\n==================================\n")
+#     for result in results:
+#         print("\n==================================\n")
+#         print(result)
+#         print("\n==================================\n")
+    prompt = input("Please input a prompt: ")
+    while prompt != "exit":
+        start_time = time.time()
+        result = generator.generate(
+            [prompt], max_gen_len=256, temperature=temperature, top_p=top_p
+        )
+        
         print(result)
-        print("\n==================================\n")
+        print(f"\n====Generated In: {time.time() - start_time:.2f} seconds=============\n")
+        prompt = input("Please input a prompt: ")
 
 
 if __name__ == "__main__":
